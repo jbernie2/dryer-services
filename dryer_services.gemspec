@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
     This gem provides a base service class that leverages the dry-monads gem
     to build composable service objects.
   DOC
-  spec.homepage              = 'https://github.com/jbernie2/dryer-services'
+  spec.homepage              = 'https://github.com/jbernie2/dryer_services'
   spec.license               = 'MIT'
   spec.platform              = Gem::Platform::RUBY
   spec.required_ruby_version = '>= 3.0.0'

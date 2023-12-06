@@ -1,4 +1,4 @@
-require_relative "../lib/dryer_service.rb"
+require_relative "../lib/dryer_services.rb"
 
 RSpec.describe Dryer::Services do
   it "loads the correct classes" do

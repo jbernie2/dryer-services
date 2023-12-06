@@ -45,7 +45,7 @@ is already a `Dry::Monad::Result`, it will not wrap the result, otherwise it
 will wrap the result in a `Dry::Monads::Success`
 
 ```
-class Divide < Dryer::Services::SimpleService
+class Divide < Dryer::Services::ResultService
     def initialize(a, b)
         @a = a
         @b = b

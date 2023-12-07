@@ -74,10 +74,12 @@ to separate data modeling from transformations.
 # Development
 This gem is set up to be developed using [Nix](https://nixos.org/)
 Once you have nix installed you can run
-`make bundle`
-to install all dependencies and
-`make dev-shell`
-to enter the development environment.
+`make env`
+to enter the development environment. Then run `make` to see other available
+commands
+
+If you don't want to use nix, all the scripts can be run directly from the
+`scripts` directory.
 
 ## Contributing
 Please create a github issue to report any problems using the Gem.

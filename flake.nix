@@ -9,55 +9,63 @@
 
   outputs = { self, nixpkgs, flake-utils, nix-filter }:
     flake-utils.lib.eachDefaultSystem (system:
-      let
+    let
+      packageOverlays = [
+        (final: prev: {
+          ruby = final.ruby_3_0;
+        })
+      ];
 
-        dependencies = {
-          ruby = import ./nix/ruby/setup.nix;
-        };
+      pkgs = import nixpkgs {
+        system = system;
+        overlays = packageOverlays;
+      };
 
-        pkgOverlays = lib.lists.flatten (
-          builtins.map 
-            (d: d.packageOverlays)
-            (lib.attrsets.attrValues dependencies)
-        );
-        pkgs = import nixpkgs { system = system; overlays = pkgOverlays; };
-        lib = nixpkgs.lib;
+      scripts = [
+        {
+          name = "updateDeps";
+          file = ./scripts/bundle.sh;
+          buildInputs = [ pkgs.bundler pkgs.bundix ];
+        }
+        {
+          name = "releaseToGithub";
+          file = ./scripts/release_to_github.sh;
+          buildInputs = [ pkgs.gh pkgs.ruby ];
+        }
+        {
+          name = "releaseToRubygems";
+          file = ./scripts/release_to_rubygems.sh;
+          buildInputs = [ pkgs.ruby ];
+        }
+      ];
 
-        builds = lib.attrsets.mapAttrs (k: v: v.build lib pkgs) dependencies;
+      wrappedScripts = (pkgs.callPackage 
+        ./nix/scripts_wrapper
+        { scripts = scripts; }
+      );
 
-        buildInputs = lib.lists.flatten (
-          builtins.map
-            (b: lib.attrsets.attrValues b.outputs)
-            (lib.attrsets.attrValues builds)
-        );
-
-        packages = lib.lists.flatten (
-          ( builtins.map
-            (b: b.packages )
-            (lib.attrsets.attrValues builds)
-          )
-        );
-
-      in
-      {
+    in with pkgs;
+      rec {
         devShells = rec {
           default = run;
-          run = pkgs.mkShell {
-            buildInputs = buildInputs;
-            packages = packages;
+          run = mkShell {
+            buildInputs = [
+              ruby.devEnv
+              git
+              libpcap
+              libxml2
+              libxslt
+              pkg-config
+              bundix
+              gnumake
+              libyaml
+              which
+            ];
           };
         };
-
         packages = {
-          default = builds.ruby.outputs.rubyEnv;
-          updateDeps = builds.ruby.outputs.updateDeps;
-          githubRelease = pkgs.callPackage ./nix/github/setup.nix {
-            gemspec_path = ./dryer_services.gemspec;
-          };
-          rubygemsRelease = pkgs.callPackage ./nix/rubygems_release {
-            gemspec_path = ./dryer_services.gemspec;
-          };
-        };
+          default = devShells.default;
+        } // wrappedScripts;
       }
     );
 }

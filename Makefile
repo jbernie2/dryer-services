@@ -29,6 +29,10 @@ env: ## gem dev env, all other tasks can be run once in this env
 bundle: ## rebuild Gemfile.lock/gemset.nix from Gemfile
 	./result/updateDeps/bin/updateDeps
 
+.PHONY: test
+test: ## run tests
+	bundle exec rspec $(test)
+
 .PHONY: release
 release: ## release to github and rubygems.org
 	$(MAKE) release-to-github

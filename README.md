@@ -53,7 +53,7 @@ class Divide < Dryer::Services::ResultService
 
     def call
         if b == 0
-            StandError.new("Can not divide by zero")
+            StandardError.new("Can not divide by zero")
         else
             a/b
         end

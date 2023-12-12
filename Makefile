@@ -9,13 +9,6 @@ help:
 env: ## gem dev env, all other tasks can be run once in this env
 	nix \
 		--extra-experimental-features 'nix-command flakes' build \
-		-o ./result/updateDeps ".#updateDeps"\
-	&& nix \
-		--extra-experimental-features 'nix-command flakes' build \
-		-o ./result/releaseToGithub ".#releaseToGithub"\
-	&& nix \
-		--extra-experimental-features 'nix-command flakes' build \
-		-o ./result/releaseToRubygems ".#releaseToRubygems"\
 	&& nix \
 		--extra-experimental-features 'nix-command flakes' \
 		develop --ignore-environment \
@@ -27,7 +20,7 @@ env: ## gem dev env, all other tasks can be run once in this env
 
 .PHONY: bundle
 bundle: ## rebuild Gemfile.lock/gemset.nix from Gemfile
-	./result/updateDeps/bin/updateDeps
+	./result/bin/update_deps
 
 .PHONY: test
 test: ## run tests
@@ -35,13 +28,13 @@ test: ## run tests
 
 .PHONY: release
 release: ## release to github and rubygems.org
-	$(MAKE) release-to-github
-	$(MAKE) release-to-rubygems
+	$(MAKE) release_to_github
+	$(MAKE) release_to_rubygems
 
-.PHONY: release-to-github
-release-to-github: ## release to github
-	./result/releaseToGithub/bin/releaseToGithub $(GEMSPEC_FILE)
+.PHONY: release_to_github
+release_to_github: ## release to github
+	./result/bin/release_to_github $(GEMSPEC_FILE)
 
-.PHONY: release-to-rubygems
-release-to-rubygems: ## release to rubygems.org
-	./result/releaseToRubygems/bin/releaseToRubygems $(GEMSPEC_FILE)
+.PHONY: release_to_rubygems
+release_to_rubygems: ## release to rubygems.org
+	./result/bin/release_to_rubygems $(GEMSPEC_FILE)

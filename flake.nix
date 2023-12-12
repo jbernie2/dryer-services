@@ -10,38 +10,41 @@
   outputs = { self, nixpkgs, flake-utils, nix-filter }:
     flake-utils.lib.eachDefaultSystem (system:
     let
-      packageOverlays = [
+      overlays = [
         (final: prev: {
           ruby = final.ruby_3_0;
         })
       ];
-
-      pkgs = import nixpkgs {
-        system = system;
-        overlays = packageOverlays;
-      };
-
-      scripts = [
-        {
-          name = "updateDeps";
-          file = ./scripts/bundle.sh;
-          buildInputs = [ pkgs.bundler pkgs.bundix ];
-        }
-        {
-          name = "releaseToGithub";
-          file = ./scripts/release_to_github.sh;
-          buildInputs = [ pkgs.gh pkgs.ruby ];
-        }
-        {
-          name = "releaseToRubygems";
-          file = ./scripts/release_to_rubygems.sh;
-          buildInputs = [ pkgs.ruby ];
-        }
-      ];
+      pkgs = import nixpkgs { inherit system overlays; };
 
       wrappedScripts = (pkgs.callPackage 
         ./nix/scripts_wrapper
-        { scripts = scripts; }
+        {
+          name = "gem_scripts";
+          scripts = [
+            {
+              name = "update_deps";
+              file = ./scripts/bundle.sh;
+            }
+            {
+              name = "release_to_github";
+              file = ./scripts/release_to_github.sh;
+            }
+            {
+              name = "release_to_rubygems";
+              file = ./scripts/release_to_rubygems.sh;
+            }
+            {
+              name = "assert_env_var.sh";
+              file = ./scripts/assert_env_var.sh;
+            }
+            {
+              name = "assert_arg.sh";
+              file = ./scripts/assert_arg.sh;
+            }
+          ];
+          buildInputs = [ pkgs.ruby pkgs.gh pkgs.bundler pkgs.bundix ];
+        }
       );
 
     in with pkgs;
@@ -63,9 +66,10 @@
             ];
           };
         };
-        packages = {
-          default = devShells.default;
-        } // wrappedScripts;
+        packages = rec {
+          default = packages.${wrappedScripts.name};
+          "${wrappedScripts.name}" = wrappedScripts;
+        };
       }
     );
 }

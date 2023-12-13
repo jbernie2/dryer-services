@@ -2,7 +2,7 @@
 set -e
 
 $(dirname "$0")/assert_arg.sh $0 1 "gemspec file" $1
-$(dirname "$0")/assert_env_var.sh $0 "GEM_HOST_API_TOKEN"
+$(dirname "$0")/assert_env_var.sh $0 "GEM_HOST_API_KEY"
 
 gem build $1
 

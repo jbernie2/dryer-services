@@ -1,5 +1,5 @@
 {
-  description = "ruby gem development environment";
+  description = "dryer-services gem dev environment";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-23.05";
@@ -16,6 +16,23 @@
         })
       ];
       pkgs = import nixpkgs { inherit system overlays; };
+      #gemDevEnv = pkgs.callPackage ./nix/ruby_gem_dev_env {}
+
+      buildGemset = (pkgs.callPackage
+        ./nix/ruby_gemset
+        { gemfile = ./Gemfile; gemspec = ./dryer_services.gemspec; }
+      );
+      gemsetPath = "${buildGemset.outPath}/gemset.nix";
+      lockfilePath = "${buildGemset.outPath}/Gemfile.lock";
+      gemfilePath = "${buildGemset.outPath}/Gemfile";
+
+      gems = pkgs.bundlerEnv {
+        name = "dryer-services-gems";
+        gemfile = gemfilePath;
+        gemset = gemsetPath;
+        lockfile = lockfilePath;
+        extraConfigPaths = [./dryer_services.gemspec];
+      };
 
       wrappedScripts = (pkgs.callPackage 
         ./nix/scripts_wrapper
@@ -52,8 +69,11 @@
         devShells = rec {
           default = run;
           run = mkShell {
+            packages = [
+              gems
+              gems.wrappedRuby
+            ];
             buildInputs = [
-              ruby.devEnv
               git
               libpcap
               libxml2
@@ -63,10 +83,11 @@
               gnumake
               libyaml
               which
+              wrappedScripts
             ];
           };
         };
-        packages = rec {
+        packages = {
           default = packages.${wrappedScripts.name};
           "${wrappedScripts.name}" = wrappedScripts;
         };

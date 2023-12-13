@@ -8,8 +8,6 @@ help:
 .PHONY: env
 env: ## gem dev env, all other tasks can be run once in this env
 	nix \
-		--extra-experimental-features 'nix-command flakes' build \
-	&& nix \
 		--extra-experimental-features 'nix-command flakes' \
 		develop --ignore-environment \
 		--show-trace \
@@ -20,7 +18,7 @@ env: ## gem dev env, all other tasks can be run once in this env
 
 .PHONY: bundle
 bundle: ## rebuild Gemfile.lock/gemset.nix from Gemfile
-	./result/bin/update_deps
+	update_deps
 
 .PHONY: test
 test: ## run tests
@@ -33,8 +31,8 @@ release: ## release to github and rubygems.org
 
 .PHONY: release_to_github
 release_to_github: ## release to github
-	./result/bin/release_to_github $(GEMSPEC_FILE)
+	release_to_github $(GEMSPEC_FILE)
 
 .PHONY: release_to_rubygems
 release_to_rubygems: ## release to rubygems.org
-	./result/bin/release_to_rubygems $(GEMSPEC_FILE)
+	release_to_rubygems $(GEMSPEC_FILE)

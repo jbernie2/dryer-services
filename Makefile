@@ -5,9 +5,19 @@ GEMSPEC_FILE=$$(find .  -name "*.gemspec")
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: build
+build: ## build
+	nix \
+		--extra-experimental-features 'nix-command flakes' \
+		build ".#buildGemset"
+
 .PHONY: env
 env: ## gem dev env, all other tasks can be run once in this env
 	nix \
+		--extra-experimental-features 'nix-command flakes' \
+		build ".#buildGemset" \
+	&& cp result/gemset.nix . \
+	&& nix \
 		--extra-experimental-features 'nix-command flakes' \
 		develop --ignore-environment \
 		--show-trace \

@@ -18,19 +18,17 @@
       pkgs = import nixpkgs { inherit system overlays; };
       #gemDevEnv = pkgs.callPackage ./nix/ruby_gem_dev_env {}
 
-      buildGemset = (pkgs.callPackage
-        ./nix/ruby_gemset
-        { gemfile = ./Gemfile; gemspec = ./dryer_services.gemspec; }
-      );
+      buildGemset = pkgs.callPackage ./nix/ruby_gemset { src = ./.; };
       gemsetPath = "${buildGemset.outPath}/gemset.nix";
       lockfilePath = "${buildGemset.outPath}/Gemfile.lock";
       gemfilePath = "${buildGemset.outPath}/Gemfile";
 
       gems = pkgs.bundlerEnv {
         name = "dryer-services-gems";
-        gemfile = gemfilePath;
-        gemset = gemsetPath;
-        lockfile = lockfilePath;
+        gemdir = ./.;
+        #gemfile = gemfilePath;
+        #gemset = gemsetPath;
+        #lockfile = lockfilePath;
         extraConfigPaths = [./dryer_services.gemspec];
       };
 
@@ -90,6 +88,7 @@
         packages = {
           default = packages.${wrappedScripts.name};
           "${wrappedScripts.name}" = wrappedScripts;
+          buildGemset = buildGemset;
         };
       }
     );

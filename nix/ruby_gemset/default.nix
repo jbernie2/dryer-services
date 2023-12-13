@@ -1,6 +1,5 @@
-{ name ? "gemset-nix-wat-wat"
-  , gemfile
-  , gemspec
+{ name ? "gemset-nix"
+  , src
   , ruby
   , bundler
   , bundix
@@ -11,21 +10,15 @@ let
 
 in
 stdenv.mkDerivation {
-  inherit name gemspec gemfile;
+  inherit name src;
   buildInputs = [ruby bundler bundix ];
-  phases = [ "buildPhase" ];
   buildPhase = ''
-    echo "TMP = $TMP"
-    echo "gemfile = $gemfile"
-    echo "gemspec = $gemspec"
-    echo "pwd = $PWD"
-
-    cd $TMP
-    cp $gemfile ./Gemfile
-    cp $gemspec .
+    rm -f Makefile # don't want this to be accidentally used by nix stdenv
     bundler lock
     HOME=$TMP bundix --lock
-    cat ./gemset.nix
+  '';
+
+  installPhase = ''
     mkdir $out
     cp ./gemset.nix $out/gemset.nix
     cp ./Gemfile.lock $out/Gemfile.lock

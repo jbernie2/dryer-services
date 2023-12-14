@@ -2,7 +2,7 @@
   description = "dryer-services gem dev environment";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.05";
+    nixpkgs.url = "nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
     nix-filter.url = "github:numtide/nix-filter";
   };
@@ -12,7 +12,7 @@
     let
       overlays = [
         (final: prev: {
-          ruby = final.ruby_3_0;
+          ruby = final.ruby_3_1;
         })
       ];
       pkgs = import nixpkgs { inherit system overlays; };

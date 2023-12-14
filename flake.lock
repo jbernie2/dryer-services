@@ -52,7 +52,24 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nix-filter": "nix-filter",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "ruby_gem_dev_shell": "ruby_gem_dev_shell"
+      }
+    },
+    "ruby_gem_dev_shell": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1702579781,
+        "narHash": "sha256-bfCDuftISKYXxvqEBr4Os6wxueajZwahVCFa/j9uHDY=",
+        "owner": "jbernie2",
+        "repo": "ruby_gem_dev_shell",
+        "rev": "80e805b449b47ec61945cdd9ead0fa1fcb7504ed",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jbernie2",
+        "repo": "ruby_gem_dev_shell",
+        "type": "github"
       }
     },
     "systems": {

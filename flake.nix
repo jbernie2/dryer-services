@@ -25,10 +25,9 @@
 
       gems = pkgs.bundlerEnv {
         name = "dryer-services-gems";
-        gemdir = ./.;
-        #gemfile = gemfilePath;
-        #gemset = gemsetPath;
-        #lockfile = lockfilePath;
+        gemfile = gemfilePath;
+        gemset = gemsetPath;
+        lockfile = lockfilePath;
         extraConfigPaths = [./dryer_services.gemspec];
       };
 
@@ -83,6 +82,9 @@
               which
               wrappedScripts
             ];
+            shellHook = ''
+              cp -f result/gemset.nix result/Gemfile.lock .
+            '';
           };
         };
         packages = {

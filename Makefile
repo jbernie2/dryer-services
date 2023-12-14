@@ -5,30 +5,22 @@ GEMSPEC_FILE=$$(find .  -name "*.gemspec")
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: build
-build: ## build
+.PHONY: build_gemset
+build_gemset: ## build/rebuild gemset.nix and Gemfile.lock
 	nix \
 		--extra-experimental-features 'nix-command flakes' \
-		build ".#buildGemset"
+		build ".#buildGemset" \
+	&& cp -f ./result/gemset.nix ./result/Gemfile.lock .
 
 .PHONY: env
 env: ## gem dev env, all other tasks can be run once in this env
 	nix \
 		--extra-experimental-features 'nix-command flakes' \
-		build ".#buildGemset" \
-	&& cp result/gemset.nix . \
-	&& nix \
-		--extra-experimental-features 'nix-command flakes' \
 		develop --ignore-environment \
 		--show-trace \
-		--keep HOME \
 		--keep GITHUB_TOKEN \
 		--keep GEM_HOST_API_KEY \
 		--keep TERM # allows for interop with tmux
-
-.PHONY: bundle
-bundle: ## rebuild Gemfile.lock/gemset.nix from Gemfile
-	update_deps
 
 .PHONY: test
 test: ## run tests

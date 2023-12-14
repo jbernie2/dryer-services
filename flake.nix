@@ -16,81 +16,21 @@
         })
       ];
       pkgs = import nixpkgs { inherit system overlays; };
-      #gemDevEnv = pkgs.callPackage ./nix/ruby_gem_dev_env {}
-
-      buildGemset = pkgs.callPackage ./nix/ruby_gemset { src = ./.; };
-      gemsetPath = "${buildGemset.outPath}/gemset.nix";
-      lockfilePath = "${buildGemset.outPath}/Gemfile.lock";
-      gemfilePath = "${buildGemset.outPath}/Gemfile";
-
-      gems = pkgs.bundlerEnv {
-        name = "dryer-services-gems";
-        gemfile = gemfilePath;
-        gemset = gemsetPath;
-        lockfile = lockfilePath;
-        extraConfigPaths = [./dryer_services.gemspec];
-      };
-
-      wrappedScripts = (pkgs.callPackage 
-        ./nix/scripts_wrapper
-        {
-          name = "gem_scripts";
-          scripts = [
-            {
-              name = "update_deps";
-              file = ./scripts/bundle.sh;
-            }
-            {
-              name = "release_to_github";
-              file = ./scripts/release_to_github.sh;
-            }
-            {
-              name = "release_to_rubygems";
-              file = ./scripts/release_to_rubygems.sh;
-            }
-            {
-              name = "assert_env_var.sh";
-              file = ./scripts/assert_env_var.sh;
-            }
-            {
-              name = "assert_arg.sh";
-              file = ./scripts/assert_arg.sh;
-            }
-          ];
-          buildInputs = [ pkgs.ruby pkgs.gh pkgs.bundler pkgs.bundix ];
-        }
-      );
 
     in with pkgs;
       rec {
         devShells = rec {
           default = run;
-          run = mkShell {
-            packages = [
-              gems
-              gems.wrappedRuby
-            ];
-            buildInputs = [
-              git
-              libpcap
-              libxml2
-              libxslt
-              pkg-config
-              bundix
-              gnumake
-              libyaml
-              which
-              wrappedScripts
-            ];
-            shellHook = ''
-              cp -f result/gemset.nix result/Gemfile.lock .
-            '';
-          };
+          run = ( callPackage 
+            ./nix/ruby_gem_dev_shell
+            { 
+              project_root = ./.;
+              gemspec = ./dryer_services.gemspec;
+            }
+          );
         };
         packages = {
-          default = packages.${wrappedScripts.name};
-          "${wrappedScripts.name}" = wrappedScripts;
-          buildGemset = buildGemset;
+          default = devShells.default;
         };
       }
     );

@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name                  = 'dryer_services'
-  spec.version               = "1.1.0"
+  spec.version               = "1.2.0"
   spec.authors               = ['John Bernier']
   spec.email                 = ['john.b.bernier@gmail.com']
   spec.summary               = 'A service object leveraging the dry-monads gem'

@@ -1,71 +1,41 @@
 {
-  description = "ruby gem development environment";
+  description = "dryer-services gem dev environment";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.05";
+    nixpkgs.url = "nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
     nix-filter.url = "github:numtide/nix-filter";
+    ruby_gem_dev_shell = {
+      url = "github:jbernie2/ruby_gem_dev_shell";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, nix-filter }:
+  outputs = { self, nixpkgs, flake-utils, nix-filter, ruby_gem_dev_shell }:
     flake-utils.lib.eachDefaultSystem (system:
     let
-      packageOverlays = [
+      overlays = [
         (final: prev: {
-          ruby = final.ruby_3_0;
+          ruby = final.ruby_3_1;
         })
       ];
-
-      pkgs = import nixpkgs {
-        system = system;
-        overlays = packageOverlays;
-      };
-
-      scripts = [
-        {
-          name = "updateDeps";
-          file = ./scripts/bundle.sh;
-          buildInputs = [ pkgs.bundler pkgs.bundix ];
-        }
-        {
-          name = "releaseToGithub";
-          file = ./scripts/release_to_github.sh;
-          buildInputs = [ pkgs.gh pkgs.ruby ];
-        }
-        {
-          name = "releaseToRubygems";
-          file = ./scripts/release_to_rubygems.sh;
-          buildInputs = [ pkgs.ruby ];
-        }
-      ];
-
-      wrappedScripts = (pkgs.callPackage 
-        ./nix/scripts_wrapper
-        { scripts = scripts; }
-      );
+      pkgs = import nixpkgs { inherit system overlays; };
 
     in with pkgs;
       rec {
         devShells = rec {
           default = run;
-          run = mkShell {
-            buildInputs = [
-              ruby.devEnv
-              git
-              libpcap
-              libxml2
-              libxslt
-              pkg-config
-              bundix
-              gnumake
-              libyaml
-              which
-            ];
-          };
+          run = ( callPackage 
+            ruby_gem_dev_shell
+            { 
+              project_root = ./.;
+              gemspec = ./dryer_services.gemspec;
+            }
+          );
         };
         packages = {
           default = devShells.default;
-        } // wrappedScripts;
+        };
       }
     );
 }

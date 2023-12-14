@@ -35,16 +35,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1700989516,
-        "narHash": "sha256-oKbmPa2wpTHh9XB3+zIx97uMZGNnp97GPliKKG2/plo=",
+        "lastModified": 1702346276,
+        "narHash": "sha256-eAQgwIWApFQ40ipeOjVSoK4TEHVd6nbSd9fApiHIw5A=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d2e4de209881b38392933fabf303cde3454b0b4c",
+        "rev": "cf28ee258fd5f9a52de6b9865cdb93a1f96d09b7",
         "type": "github"
       },
       "original": {
         "id": "nixpkgs",
-        "ref": "nixos-23.05",
+        "ref": "nixos-23.11",
         "type": "indirect"
       }
     },
@@ -52,7 +52,24 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nix-filter": "nix-filter",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "ruby_gem_dev_shell": "ruby_gem_dev_shell"
+      }
+    },
+    "ruby_gem_dev_shell": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1702579781,
+        "narHash": "sha256-bfCDuftISKYXxvqEBr4Os6wxueajZwahVCFa/j9uHDY=",
+        "owner": "jbernie2",
+        "repo": "ruby_gem_dev_shell",
+        "rev": "80e805b449b47ec61945cdd9ead0fa1fcb7504ed",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jbernie2",
+        "repo": "ruby_gem_dev_shell",
+        "type": "github"
       }
     },
     "systems": {

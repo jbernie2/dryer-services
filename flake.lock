@@ -59,11 +59,11 @@
     "ruby_gem_dev_shell": {
       "flake": false,
       "locked": {
-        "lastModified": 1704904551,
-        "narHash": "sha256-N9tzKVcdoyQ07kyZo0/aYLmzRyDPeu+FiS95YrWQJnY=",
+        "lastModified": 1704919089,
+        "narHash": "sha256-raLOofQnIDCIK3Y0Y8fBwdRl6yjQEKIe7mz7xxqjy6g=",
         "owner": "jbernie2",
         "repo": "ruby_gem_dev_shell",
-        "rev": "e3f638005b583a2212f26a3c330379b0746ee251",
+        "rev": "e2338e0d3aa23e67c4d2d70f8f9a7bc8e703d769",
         "type": "github"
       },
       "original": {

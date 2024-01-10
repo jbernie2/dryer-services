@@ -1,5 +1,5 @@
 {
-  description = "dryer-services gem dev environment";
+  description = "ruby gem development environment";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-23.11";
@@ -22,18 +22,15 @@
       pkgs = import nixpkgs { inherit system overlays; };
 
     in with pkgs;
-      rec {
+      {
         devShells = rec {
           default = run;
-          run = ( callPackage 
+          run = ( callPackage
             ruby_gem_dev_shell
-            { 
+            {
               project_root = ./.;
             }
           );
-        };
-        packages = {
-          default = devShells.default;
         };
       }
     );

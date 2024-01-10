@@ -1,12 +1,17 @@
+## NOTE:
+## This file is provided by ruby_gem_dev_shell and any changes
+## will be overwritten when the shell is opened
+##
+
 .DEFAULT_GOAL := help
-GEMSPEC_FILE=$$(find . -name "*.gemspec")
+GEMSPEC_FILE=$$(find .  -name "*.gemspec")
 
 .PHONY: help
-help:
+help: ## list commands, default command
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: env
-env: ## gem dev env, all other tasks can be run once in this env
+env: ## starts the dev shell
 	nix \
 		--extra-experimental-features 'nix-command flakes' \
 		develop --ignore-environment \

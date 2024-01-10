@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dryer_services (1.1.0)
+    dryer_services (1.2.0)
       dry-monads (~> 1.6)
 
 GEM
@@ -54,4 +54,4 @@ DEPENDENCIES
   rspec (~> 3.10)
 
 BUNDLED WITH
-   2.4.13
+   2.4.22

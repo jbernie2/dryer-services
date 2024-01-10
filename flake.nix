@@ -6,7 +6,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     nix-filter.url = "github:numtide/nix-filter";
     ruby_gem_dev_shell = {
-      url = "github:jbernie2/ruby_gem_dev_shell";
+      url = "github:jbernie2/ruby_gem_dev_shell/main";
       flake = false;
     };
   };
@@ -29,7 +29,6 @@
             ruby_gem_dev_shell
             { 
               project_root = ./.;
-              gemspec = ./dryer_services.gemspec;
             }
           );
         };

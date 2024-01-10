@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-GEMSPEC_FILE=$$(find .  -name "*.gemspec")
+GEMSPEC_FILE=$$(find . -name "*.gemspec")
 
 .PHONY: help
 help:

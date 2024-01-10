@@ -1,6 +1,7 @@
 # Nix stuff
 .direnv/
 result
+outputs
 
 # editor temp files
 *.swp

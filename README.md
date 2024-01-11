@@ -71,15 +71,11 @@ Add.call(4,0) # returns Dry::Monads::Failure("Can not divide by zero")
 Using the Service pattern can help to make code more modular, and make it easier
 to separate data modeling from transformations.
 
-# Development
-This gem is set up to be developed using [Nix](https://nixos.org/)
-Once you have nix installed you can run
-`make env`
-to enter the development environment. Then run `make` to see other available
-commands
-
-If you don't want to use nix, all the scripts can be run directly from the
-`scripts` directory.
+## Development
+This gem is set up to be developed using [Nix](https://nixos.org/) and
+[ruby_gem_dev_shell](https://github.com/jbernie2/ruby_gem_dev_shell)
+Once you have nix installed you can run `make env` to enter the development
+environment and then `make` to see the list of available commands
 
 ## Contributing
 Please create a github issue to report any problems using the Gem.

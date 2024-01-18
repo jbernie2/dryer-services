@@ -37,13 +37,23 @@ end
 Add.call(1,2) # returns 3
 ```
 
-### ResultService Example
+### ResultService Examples
 
-Result Service wraps the value returned from `call` in a `Dry::Monad::Result`.
-If the return value is an Error, it will return a Failure. If the return value
-is already a `Dry::Monad::Result`, it will not wrap the result, otherwise it
-will wrap the result in a `Dry::Monads::Success`
+ResultService wraps the value returned from `call` in a `Dry::Monad::Result`.
+There are several cases
+    - If the return value is an Error, it will return a Failure
+    - If the return value is not an Error, and is not a Result, it will wrap the
+      return value in a Result
+    - If the return value is a list of Results eg [Success(1), Success(2)] it
+      will condense those results into a single Result eg Success([1,2]). If any
+      of the results in the list are Failures eg [Success(1), Failure(2)], It
+      will return the first failure encountered eg Failure(2). Changing a list
+      of Monads (Results) into a Monad containing a list of values, is called
+      'traversing'
+   - If the return value is already a `Dry::Monad::Result`, it will not wrap the
+     result
 
+#### Wrapping an error in a Failure
 ```
 class Divide < Dryer::Services::ResultService
     def initialize(a, b)
@@ -63,8 +73,30 @@ class Divide < Dryer::Services::ResultService
     attr_reader :a, :b
 end
 
-Add.call(4,2) # returns Dry::Monads::Success(2)
-Add.call(4,0) # returns Dry::Monads::Failure("Can not divide by zero")
+Divide.call(4,2) # returns Dry::Monads::Success(2)
+Divide.call(4,0) # returns Dry::Monads::Failure("Can not divide by zero")
+```
+
+#### Traversing a list of results
+```
+class DivideMany < Dryer::Services::ResultService
+    def initialize(a, b)
+        @a = a
+        @b = b
+    end
+
+    def call
+        # each call to Divide returns a Result
+        # so we are returning a list of Results
+        a.map { |x| Divide.call(x,b) }
+    end
+
+    private
+    attr_reader :a, :b
+end
+
+DivideMany.call([2,4,6],2) # returns Dry::Monads::Success([1,2,3])
+DivideMany.call([2,4,6],0) # returns Dry::Monads::Failure("Can not divide by zero")
 ```
 
 ## Advantages

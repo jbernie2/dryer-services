@@ -15,6 +15,11 @@ module Dryer
             result
           elsif result.is_a?(StandardError)
             Dry::Monads::Failure(result)
+          elsif result.is_a?(Array) && result.all?{ |x| x.is_a?(Dry::Monads::Result) }
+            Dry::Monads::List[*result]
+              .typed(Dry::Monads::Result)
+              .traverse
+              .fmap(&:value)
           else
             Dry::Monads::Success(result)
           end

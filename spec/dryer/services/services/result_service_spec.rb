@@ -48,6 +48,11 @@ RSpec.describe Dryer::Services::Services::ResultService do
     def call; Dry::Monads::Failure(@a) end
   end
 
+  class TestService < described_class
+    def initialize(a); @a = a end
+    def call; @a end
+  end
+
   context "when successful" do
     let(:service) { SuccessService }
     it "returns a success object" do
@@ -120,6 +125,21 @@ RSpec.describe Dryer::Services::Services::ResultService do
     let(:service) { FailureResultService }
     it "does not re-wrap the return value" do
       expect(service.call("foo").failure).to eq("foo")
+    end
+  end
+
+  context "when the service returns an array of monads" do
+    context "when they are all successful" do
+      let(:service) { TestService.call([Success(1), Success(2)]) }
+      it "returns a success monad containing an array of the values" do
+        expect(service).to eq(Success([1,2]))
+      end
+    end
+    context "when one or more is a failure" do
+      let(:service) { TestService.call([Success(1), Failure("foo")]) }
+      it "returns a failure monad with the first error encountered" do
+        expect(service).to eq(Failure("foo"))
+      end
     end
   end
 end

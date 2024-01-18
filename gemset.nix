@@ -60,7 +60,7 @@
       path = ./.;
       type = "path";
     };
-    version = "1.2.0";
+    version = "2.0.0";
   };
   io-console = {
     groups = ["default" "development"];

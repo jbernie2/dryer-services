@@ -4,16 +4,6 @@ require 'dry-monads'
 RSpec.describe Dryer::Services::Services::ResultService do
   include Dry::Monads[:result]
 
-  class SuccessService < described_class
-    def initialize; end
-    def call; true end
-  end
-
-  class FailureService < described_class
-    def initialize; end
-    def call; StandardError.new("foo") end
-  end
-
   class UnnamedArgumentService < described_class
     def initialize(a, b, c); end
     def call; true end
@@ -38,27 +28,22 @@ RSpec.describe Dryer::Services::Services::ResultService do
     def call; @args end
   end
 
-  class SuccessResultService < described_class
+  class TestService < described_class
     def initialize(a); @a = a end
-    def call; Dry::Monads::Success(@a) end
-  end
-
-  class FailureResultService < described_class
-    def initialize(a); @a = a end
-    def call; Dry::Monads::Failure(@a) end
+    def call; @a end
   end
 
   context "when successful" do
-    let(:service) { SuccessService }
+    let(:service) { TestService.call(true) }
     it "returns a success object" do
-      expect(service.call).to be_a(Dry::Monads::Success)
+      expect(service).to be_a(Dry::Monads::Success)
     end
   end
 
   context "when an error is returned" do
-    let(:service) { FailureService }
+    let(:service) { TestService.call(StandardError.new("foo")) }
     it "returns a failure object" do
-      expect(service.call).to be_a(Dry::Monads::Failure)
+      expect(service).to be_a(Dry::Monads::Failure)
     end
   end
 
@@ -110,16 +95,31 @@ RSpec.describe Dryer::Services::Services::ResultService do
   end
 
   context "when the service explicitly returns a Success Monad" do
-    let(:service) { SuccessResultService }
+    let(:service) { TestService.call(Dry::Monads::Success("foo")) }
     it "does not re-wrap the return value" do
-      expect(service.call("foo").value!).to eq("foo")
+      expect(service.value!).to eq("foo")
     end
   end
 
   context "when the service explicitly returns a Failure Monad" do
-    let(:service) { FailureResultService }
+    let(:service) { TestService.call(Dry::Monads::Failure("foo")) }
     it "does not re-wrap the return value" do
-      expect(service.call("foo").failure).to eq("foo")
+      expect(service.failure).to eq("foo")
+    end
+  end
+
+  context "when the service returns an array of monads" do
+    context "when they are all successful" do
+      let(:service) { TestService.call([Success(1), Success(2)]) }
+      it "returns a success monad containing an array of the values" do
+        expect(service).to eq(Success([1,2]))
+      end
+    end
+    context "when one or more is a failure" do
+      let(:service) { TestService.call([Success(1), Failure("foo")]) }
+      it "returns a failure monad with the first error encountered" do
+        expect(service).to eq(Failure("foo"))
+      end
     end
   end
 end

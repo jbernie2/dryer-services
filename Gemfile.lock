@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dryer_services (1.2.0)
+    dryer_services (2.0.0)
       dry-monads (~> 1.6)
 
 GEM
